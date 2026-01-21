@@ -24,25 +24,11 @@
         }
 
         .container {
-            max-width: 800px; /* Ancho A4 aproximado */
+            max-width: 800px; /* Ancho visual en pantalla */
             margin: 0 auto;
             background-color: #ffffff;
             padding: 40px;
             box-shadow: 0 0 15px rgba(0,0,0,0.1);
-        }
-
-        /* Clase especial que se activa SOLO al generar el PDF */
-        .pdf-mode {
-            width: 800px !important;
-            max-width: 800px !important;
-            min-width: 800px !important;
-            margin: 0 !important;
-            padding: 40px !important;
-            box-shadow: none !important;
-            border: none !important;
-            background-color: white !important;
-            /* Forzar textos negros puros */
-            color: black !important;
         }
 
         /* Encabezado */
@@ -70,7 +56,7 @@
             color: #555;
         }
 
-        /* Ajuste móvil visual (no afecta al PDF gracias a .pdf-mode) */
+        /* Ajuste móvil visual */
         @media (max-width: 600px) {
             header {
                 flex-direction: column;
@@ -78,6 +64,10 @@
             }
             .meta-info {
                 text-align: left;
+            }
+            /* Ajustes para que se vea bien en el celular, pero no afectan al PDF */
+            .container {
+                padding: 20px;
             }
         }
 
@@ -105,7 +95,7 @@
 
         /* Tablas */
         .table-responsive {
-            overflow-x: visible; /* Cambiado para evitar cortes en PDF */
+            overflow-x: auto;
         }
 
         table {
@@ -173,7 +163,7 @@
             margin: 0;
         }
 
-        /* Evitar cortes de página en elementos clave */
+        /* Evitar cortes de página en el PDF */
         tr { page-break-inside: avoid; }
         h3 { page-break-after: avoid; }
         .footer-vos { page-break-inside: avoid; }
@@ -205,17 +195,12 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0,0,0,0.4);
         }
-
-        /* Ocultar botón al imprimir */
-        @media print {
-            .pdf-btn { display: none; }
-        }
     </style>
 </head>
 <body>
 
     <!-- Botón Flotante -->
-    <button class="pdf-btn" id="downloadPdf" data-html2canvas-ignore="true">
+    <button class="pdf-btn" id="downloadPdf">
         <svg style="width:20px;height:20px" viewBox="0 0 24 24">
             <path fill="currentColor" d="M19,19H5V5H19M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M13.96,12.29L11.21,15.83L9.25,13.47L6.5,17H17.5L13.96,12.29Z" />
         </svg>
@@ -378,40 +363,59 @@
 
     <script>
         document.getElementById('downloadPdf').addEventListener('click', function () {
-            const element = document.getElementById('invoice');
             const btn = this;
             const originalText = btn.innerHTML;
-
-            // 1. Activar modo PDF (Fuerza ancho fijo y estilos limpios)
-            element.classList.add('pdf-mode');
-            window.scrollTo(0, 0); // Ir arriba para evitar cortes raros
             btn.innerHTML = 'Generando...';
             btn.disabled = true;
 
-            // 2. Configuración robusta
+            // 1. Clonar el elemento
+            // Clonamos el contenedor para manipularlo sin afectar la vista del usuario
+            const element = document.getElementById('invoice');
+            const clone = element.cloneNode(true);
+
+            // 2. Preparar el clon
+            // Lo forzamos a tener un ancho fijo de escritorio (aprox 750px entra perfecto en A4)
+            // Lo posicionamos fuera de pantalla para que el usuario no lo vea parpadear
+            clone.style.width = '750px';
+            clone.style.maxWidth = '750px';
+            clone.style.minWidth = '750px';
+            clone.style.padding = '40px';
+            clone.style.margin = '0';
+            clone.style.position = 'absolute';
+            clone.style.left = '-9999px';
+            clone.style.top = '0';
+            clone.style.backgroundColor = 'white';
+            
+            // Asegurar que las tablas se vean bien en el clon
+            const tables = clone.querySelectorAll('.table-responsive');
+            tables.forEach(t => t.style.overflow = 'visible');
+
+            // Agregamos el clon al cuerpo del documento
+            document.body.appendChild(clone);
+
+            // 3. Configuración del PDF
             const opt = {
-                margin:       [0.3, 0.3, 0.3, 0.3], // Margen en pulgadas
+                margin:       [0.3, 0.3, 0.3, 0.3], // Márgenes [top, left, bottom, right]
                 filename:     'Presupuesto_Agroconsulta_2026.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { 
-                    scale: 2, 
-                    useCORS: true,
-                    logging: false,
-                    windowWidth: 800 // Ancho virtual para simular escritorio
+                    scale: 2,           // Alta resolución
+                    useCORS: true,      // Permitir imágenes externas si las hubiera
+                    scrollY: 0          // Capturar desde el inicio
                 },
-                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
+                pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] } // Evitar cortes feos
             };
 
-            // 3. Generar y limpiar
-            html2pdf().set(opt).from(element).save().then(() => {
-                // Restaurar estado original
-                element.classList.remove('pdf-mode');
+            // 4. Generar y Limpiar
+            html2pdf().set(opt).from(clone).save().then(() => {
+                document.body.removeChild(clone); // Eliminar el clon
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             }).catch(err => {
-                console.error("Error generating PDF:", err);
-                element.classList.remove('pdf-mode');
-                btn.innerHTML = "Error :(";
+                console.error(err);
+                if(document.body.contains(clone)) document.body.removeChild(clone);
+                btn.innerHTML = 'Error';
                 setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; }, 2000);
             });
         });
