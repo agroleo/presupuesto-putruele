@@ -186,6 +186,15 @@
             }
         }
 
+        /* Reglas para evitar cortes feos en PDF */
+        tr, td, th {
+            page-break-inside: avoid !important;
+        }
+        
+        .no-break {
+            page-break-inside: avoid;
+        }
+
         /* Botón de Descarga PDF */
         .pdf-btn {
             position: fixed;
@@ -384,21 +393,30 @@
     <script>
         document.getElementById('downloadPdf').addEventListener('click', function () {
             const element = document.getElementById('invoice');
+            
+            // Opciones optimizadas para evitar que se desarme
             const opt = {
-                margin:       [0.5, 0.5, 0.5, 0.5], // Márgenes [top, left, bottom, right] en pulgadas
+                margin:       [0.3, 0.3, 0.3, 0.3], // Márgenes más ajustados (pulgadas)
                 filename:     'Presupuesto_Agroconsulta_2026.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true },
+                html2canvas:  { 
+                    scale: 2, // Mejor resolución
+                    useCORS: true, 
+                    scrollY: 0,
+                    windowWidth: 1024 // IMPORTANTE: Forza ancho de escritorio para que no se vea móvil
+                },
                 jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
             };
 
-            // Mostrar mensaje de "Generando..." (Opcional)
+            // Mostrar mensaje de "Generando..."
             const btn = this;
             const originalText = btn.innerHTML;
             btn.innerHTML = 'Generando...';
+            btn.disabled = true;
             
             html2pdf().set(opt).from(element).save().then(() => {
                 btn.innerHTML = originalText;
+                btn.disabled = false;
             });
         });
     </script>
