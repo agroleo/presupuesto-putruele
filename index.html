@@ -4,9 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Presupuesto Fertilizantes - Agroconsulta SRL</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+    <!-- Carga de fuentes optimizada para PDF -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <!-- Librería html2pdf (Versión estable) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
+    <style>
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #f4f4f4;
@@ -25,6 +31,20 @@
             box-shadow: 0 0 15px rgba(0,0,0,0.1);
         }
 
+        /* Clase especial que se activa SOLO al generar el PDF */
+        .pdf-mode {
+            width: 800px !important;
+            max-width: 800px !important;
+            min-width: 800px !important;
+            margin: 0 !important;
+            padding: 40px !important;
+            box-shadow: none !important;
+            border: none !important;
+            background-color: white !important;
+            /* Forzar textos negros puros */
+            color: black !important;
+        }
+
         /* Encabezado */
         header {
             border-bottom: 2px solid #2E7D32;
@@ -33,7 +53,7 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            flex-wrap: wrap; /* Para móviles */
+            flex-wrap: wrap; 
             gap: 20px;
         }
 
@@ -50,7 +70,7 @@
             color: #555;
         }
 
-        /* Ajuste móvil para encabezado */
+        /* Ajuste móvil visual (no afecta al PDF gracias a .pdf-mode) */
         @media (max-width: 600px) {
             header {
                 flex-direction: column;
@@ -85,7 +105,7 @@
 
         /* Tablas */
         .table-responsive {
-            overflow-x: auto;
+            overflow-x: visible; /* Cambiado para evitar cortes en PDF */
         }
 
         table {
@@ -93,7 +113,6 @@
             border-collapse: collapse;
             margin-top: 15px;
             font-size: 13px;
-            min-width: 600px; /* Fuerza scroll horizontal en móviles pequeños */
         }
 
         th, td {
@@ -147,10 +166,6 @@
             font-size: 13px;
             margin: 15px 0;
         }
-
-        .footer-vos li {
-            position: relative;
-        }
         
         .footer-vos p {
             font-size: 12px;
@@ -158,42 +173,10 @@
             margin: 0;
         }
 
-        /* Impresión */
-        @media print {
-            body { 
-                background-color: white; 
-                padding: 0; 
-                font-size: 12pt;
-            }
-            .container { 
-                box-shadow: none; 
-                padding: 0; 
-                width: 100%; 
-                max-width: 100%; 
-                margin: 0;
-            }
-            .footer-vos {
-                page-break-inside: avoid;
-            }
-            /* Ocultar botón PDF al imprimir */
-            .pdf-btn {
-                display: none !important;
-            }
-            /* Asegurar impresión de colores de fondo */
-            * {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-        }
-
-        /* Reglas para evitar cortes feos en PDF */
-        tr, td, th {
-            page-break-inside: avoid !important;
-        }
-        
-        .no-break {
-            page-break-inside: avoid;
-        }
+        /* Evitar cortes de página en elementos clave */
+        tr { page-break-inside: avoid; }
+        h3 { page-break-after: avoid; }
+        .footer-vos { page-break-inside: avoid; }
 
         /* Botón de Descarga PDF */
         .pdf-btn {
@@ -222,9 +205,12 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0,0,0,0.4);
         }
+
+        /* Ocultar botón al imprimir */
+        @media print {
+            .pdf-btn { display: none; }
+        }
     </style>
-    <!-- Librería para generar PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
@@ -369,7 +355,7 @@
             </table>
         </div>
 
-        <!-- Nueva nota aclaratoria sobre IVA -->
+        <!-- Nota IVA -->
         <div style="margin-top: 25px; padding: 15px; background-color: #f1f8e9; border: 1px solid #c8e6c9; border-left: 5px solid #2E7D32; font-size: 13px; color: #2e7d32;">
             <strong>ℹ NOTA IMPOSITIVA IMPORTANTE:</strong><br>
             Todos los valores detallados en este presupuesto son <strong>NETOS</strong> y NO incluyen IVA. 
@@ -393,30 +379,40 @@
     <script>
         document.getElementById('downloadPdf').addEventListener('click', function () {
             const element = document.getElementById('invoice');
-            
-            // Opciones optimizadas para evitar que se desarme
+            const btn = this;
+            const originalText = btn.innerHTML;
+
+            // 1. Activar modo PDF (Fuerza ancho fijo y estilos limpios)
+            element.classList.add('pdf-mode');
+            window.scrollTo(0, 0); // Ir arriba para evitar cortes raros
+            btn.innerHTML = 'Generando...';
+            btn.disabled = true;
+
+            // 2. Configuración robusta
             const opt = {
-                margin:       [0.3, 0.3, 0.3, 0.3], // Márgenes más ajustados (pulgadas)
+                margin:       [0.3, 0.3, 0.3, 0.3], // Margen en pulgadas
                 filename:     'Presupuesto_Agroconsulta_2026.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { 
-                    scale: 2, // Mejor resolución
-                    useCORS: true, 
-                    scrollY: 0,
-                    windowWidth: 1024 // IMPORTANTE: Forza ancho de escritorio para que no se vea móvil
+                    scale: 2, 
+                    useCORS: true,
+                    logging: false,
+                    windowWidth: 800 // Ancho virtual para simular escritorio
                 },
                 jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
             };
 
-            // Mostrar mensaje de "Generando..."
-            const btn = this;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = 'Generando...';
-            btn.disabled = true;
-            
+            // 3. Generar y limpiar
             html2pdf().set(opt).from(element).save().then(() => {
+                // Restaurar estado original
+                element.classList.remove('pdf-mode');
                 btn.innerHTML = originalText;
                 btn.disabled = false;
+            }).catch(err => {
+                console.error("Error generating PDF:", err);
+                element.classList.remove('pdf-mode');
+                btn.innerHTML = "Error :(";
+                setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; }, 2000);
             });
         });
     </script>
