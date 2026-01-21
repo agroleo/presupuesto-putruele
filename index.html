@@ -1,425 +1,452 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Presupuesto Fertilizantes - Agroconsulta SRL</title>
-    <!-- Carga de fuentes optimizada para PDF -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    
-    <!-- Librería html2pdf (Versión estable) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Presupuesto Fertilizantes - Agroconsulta SRL</title>
 
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-            color: #333;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
+  <!-- Fuente Google (ok para pantalla; para PDF podría variar si no carga) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet" />
 
-        .container {
-            max-width: 800px; /* Ancho visual en pantalla */
-            margin: 0 auto;
-            background-color: #ffffff;
-            padding: 40px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-        }
+  <!-- html2pdf -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-        /* Encabezado */
-        header {
-            border-bottom: 2px solid #2E7D32;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            flex-wrap: wrap; 
-            gap: 20px;
-        }
+  <style>
+    body {
+      font-family: "Roboto", sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
 
-        .logo h1 {
-            margin: 0;
-            color: #2E7D32;
-            font-size: 28px;
-            text-transform: uppercase;
-        }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      padding: 40px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
 
-        .meta-info {
-            text-align: right;
-            font-size: 14px;
-            color: #555;
-        }
+    header {
+      border-bottom: 2px solid #2e7d32;
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
 
-        /* Ajuste móvil visual */
-        @media (max-width: 600px) {
-            header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .meta-info {
-                text-align: left;
-            }
-            /* Ajustes para que se vea bien en el celular, pero no afectan al PDF */
-            .container {
-                padding: 20px;
-            }
-        }
+    .logo h1 {
+      margin: 0;
+      color: #2e7d32;
+      font-size: 28px;
+      text-transform: uppercase;
+    }
 
-        h2, h3 {
-            color: #1b5e20;
-        }
+    .meta-info {
+      text-align: right;
+      font-size: 14px;
+      color: #555;
+    }
 
-        h3 {
-            border-left: 5px solid #4CAF50;
-            padding-left: 10px;
-            margin-top: 30px;
-        }
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .meta-info {
+        text-align: left;
+      }
+      .container {
+        padding: 20px;
+      }
+    }
 
-        /* Alertas y Notas */
-        .alert-box {
-            background-color: #fff3cd;
-            border: 1px solid #ffeeba;
-            color: #856404;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 25px;
-            font-weight: bold;
-            text-align: center;
-        }
+    h2, h3 { color: #1b5e20; }
 
-        /* Tablas */
-        .table-responsive {
-            overflow-x: auto;
-        }
+    h3 {
+      border-left: 5px solid #4caf50;
+      padding-left: 10px;
+      margin-top: 30px;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            font-size: 13px;
-        }
+    .alert-box {
+      background-color: #fff3cd;
+      border: 1px solid #ffeeba;
+      color: #856404;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 25px;
+      font-weight: bold;
+      text-align: center;
+    }
 
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: center;
-        }
+    .table-responsive { overflow-x: auto; }
 
-        th {
-            background-color: #2E7D32;
-            color: white;
-            font-weight: 500;
-        }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      font-size: 13px;
+    }
 
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: center;
+      vertical-align: middle;
+    }
 
-        .text-left {
-            text-align: left;
-        }
+    th {
+      background-color: #2e7d32;
+      color: white;
+      font-weight: 500;
+    }
 
-        .total-col {
-            font-weight: bold;
-            background-color: #e8f5e9;
-        }
+    tr:nth-child(even) { background-color: #f9f9f9; }
 
-        /* Zócalo +VOS */
-        .footer-vos {
-            margin-top: 50px;
-            background-color: #1b1b1b;
-            color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-        }
+    .text-left { text-align: left; }
 
-        .footer-vos h4 {
-            margin: 0 0 10px 0;
-            color: #4CAF50;
-            font-size: 18px;
-        }
+    .total-col {
+      font-weight: bold;
+      background-color: #e8f5e9;
+    }
 
-        .footer-vos ul {
-            list-style: none;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            font-size: 13px;
-            margin: 15px 0;
-        }
-        
-        .footer-vos p {
-            font-size: 12px;
-            color: #aaa;
-            margin: 0;
-        }
+    .footer-vos {
+      margin-top: 50px;
+      background-color: #1b1b1b;
+      color: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+    }
 
-        /* Evitar cortes de página en el PDF */
-        tr { page-break-inside: avoid; }
-        h3 { page-break-after: avoid; }
-        .footer-vos { page-break-inside: avoid; }
+    .footer-vos h4 {
+      margin: 0 0 10px 0;
+      color: #4caf50;
+      font-size: 18px;
+    }
 
-        /* Botón de Descarga PDF */
-        .pdf-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background-color: #d32f2f;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            cursor: pointer;
-            z-index: 1000;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-family: 'Roboto', sans-serif;
-        }
+    .footer-vos ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      margin: 15px 0;
+    }
 
-        .pdf-btn:hover {
-            background-color: #b71c1c;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-        }
-    </style>
+    .footer-vos p {
+      font-size: 12px;
+      color: #aaa;
+      margin: 0;
+    }
+
+    /* Evitar cortes feos */
+    table, tr, td, th, .alert-box, header, .footer-vos {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    h3 { page-break-after: avoid; }
+
+    /* Botón PDF */
+    .pdf-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background-color: #d32f2f;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: bold;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: "Roboto", sans-serif;
+    }
+    .pdf-btn:hover {
+      background-color: #b71c1c;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    /* ====== CLAVE PARA 2 HOJAS: salto de página controlado ====== */
+    .pdf-page-break {
+      height: 0;
+      margin: 0;
+      border: 0;
+      page-break-before: always; /* legacy */
+      break-before: page;        /* moderno */
+    }
+
+    /* ====== Ajustes SOLO cuando generamos PDF (en el clon) ====== */
+    .pdf-mode table { font-size: 12px; }
+    .pdf-mode th, .pdf-mode td { padding: 8px; }
+    .pdf-mode .footer-vos { margin-top: 30px; }
+  </style>
 </head>
+
 <body>
+  <!-- Botón Flotante -->
+  <button class="pdf-btn" id="downloadPdf" type="button">
+    <svg style="width:20px;height:20px" viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="currentColor"
+        d="M19,19H5V5H19M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M13.96,12.29L11.21,15.83L9.25,13.47L6.5,17H17.5L13.96,12.29Z" />
+    </svg>
+    Descargar PDF
+  </button>
 
-    <!-- Botón Flotante -->
-    <button class="pdf-btn" id="downloadPdf">
-        <svg style="width:20px;height:20px" viewBox="0 0 24 24">
-            <path fill="currentColor" d="M19,19H5V5H19M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M13.96,12.29L11.21,15.83L9.25,13.47L6.5,17H17.5L13.96,12.29Z" />
-        </svg>
-        Descargar PDF
-    </button>
+  <div class="container" id="invoice">
+    <header>
+      <div class="logo">
+        <h1>Agroconsulta SRL</h1>
+        <div style="font-size: 14px; color: #666; margin-top: 5px;">San Juan, Argentina</div>
+      </div>
+      <div class="meta-info">
+        <strong>Fecha:</strong> 21 de enero de 2026<br />
+        <strong>Ref:</strong> Plan Básico Fertilización Postcosecha (Uva)<br />
+        <strong>Superficie:</strong> 37 ha
+      </div>
+    </header>
 
-    <div class="container" id="invoice">
-        <header>
-            <div class="logo">
-                <h1>Agroconsulta SRL</h1>
-                <div style="font-size: 14px; color: #666; margin-top: 5px;">San Juan, Argentina</div>
-            </div>
-            <div class="meta-info">
-                <strong>Fecha:</strong> 21 de enero de 2026<br>
-                <strong>Ref:</strong> Plan Básico Fertilización Postcosecha (Uva)<br>
-                <strong>Superficie:</strong> 37 ha
-            </div>
-        </header>
-
-        <div class="alert-box">
-            ⚠ CONDICIÓN TÉCNICA: Aplicación debe ser INCORPORADA AL SUELO para maximizar eficiencia y reducir pérdidas.
-        </div>
-
-        <h3>PAQUETE 1: TECNOLÓGICO SIMPLE (120 u N/ha)</h3>
-        <p style="font-size: 13px; color: #555;">Priorización de aporte de unidades de nitrógeno mediante fuentes convencionales.</p>
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Producto</th>
-                        <th>Unidades N/ha</th>
-                        <th>Bolsas/ha</th>
-                        <th>Total Bolsas<br>(37 ha)</th>
-                        <th>Precio Unit.<br>(Neto S/IVA)</th>
-                        <th>Costo/ha<br>(Neto)</th>
-                        <th>Costo Total<br>(Neto)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="text-left"><strong>Opción 1A:</strong> Urea 45% N</td>
-                        <td>120</td>
-                        <td>11</td>
-                        <td>407</td>
-                        <td>$24.140</td>
-                        <td>$265.540</td>
-                        <td class="total-col">$9.824.980</td>
-                    </tr>
-                    <tr>
-                        <td class="text-left"><strong>Opción 1B:</strong> Nitrato de Amonio 28% N</td>
-                        <td>120</td>
-                        <td>18</td>
-                        <td>666</td>
-                        <td>$23.526</td>
-                        <td>$423.468</td>
-                        <td class="total-col">$15.668.316</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <h3>PAQUETE 2: TECNOLÓGICO ELEVADO (80 u N/ha)</h3>
-        <p style="font-size: 13px; color: #555;">Uso de tecnologías de alta eficiencia (inhibidores/complejas) para reducir dosis manteniendo respuesta.</p>
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Producto</th>
-                        <th>Unidades N/ha</th>
-                        <th>Bolsas/ha</th>
-                        <th>Total Bolsas<br>(37 ha)</th>
-                        <th>Precio Unit.<br>(Neto S/IVA)</th>
-                        <th>Costo/ha<br>(Neto)</th>
-                        <th>Costo Total<br>(Neto)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="text-left"><strong>Opción 2A:</strong> YaraBela Nitrodoble<br><small>(27% N + CaO + Mg)</small></td>
-                        <td>80</td>
-                        <td>12</td>
-                        <td>444</td>
-                        <td>$25.194</td>
-                        <td>$302.328</td>
-                        <td class="total-col">$11.186.136</td>
-                    </tr>
-                    <tr>
-                        <td class="text-left"><strong>Opción 2B:</strong> Nitrogen Slow X<br><small>(45% N + DMPP)</small></td>
-                        <td>80</td>
-                        <td>8</td>
-                        <td>296</td>
-                        <td>$42.838</td>
-                        <td>$342.704</td>
-                        <td class="total-col">$12.680.048</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <h3>RESUMEN COMPARATIVO DE INVERSIÓN</h3>
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Opción</th>
-                        <th>Tecnología</th>
-                        <th>Costo por ha (Neto)</th>
-                        <th>Inversión Total (Neto)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="text-left"><strong>1A (Urea)</strong></td>
-                        <td>Simple (120u)</td>
-                        <td>$265.540</td>
-                        <td class="total-col">$9.824.980</td>
-                    </tr>
-                    <tr>
-                        <td class="text-left"><strong>2A (YaraBela)</strong></td>
-                        <td>Elevada (80u)</td>
-                        <td>$302.328</td>
-                        <td class="total-col">$11.186.136</td>
-                    </tr>
-                    <tr>
-                        <td class="text-left"><strong>2B (Slow X)</strong></td>
-                        <td>Elevada (80u)</td>
-                        <td>$342.704</td>
-                        <td class="total-col">$12.680.048</td>
-                    </tr>
-                    <tr>
-                        <td class="text-left"><strong>1B (Nitrato)</strong></td>
-                        <td>Simple (120u)</td>
-                        <td>$423.468</td>
-                        <td class="total-col">$15.668.316</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Nota IVA -->
-        <div style="margin-top: 25px; padding: 15px; background-color: #f1f8e9; border: 1px solid #c8e6c9; border-left: 5px solid #2E7D32; font-size: 13px; color: #2e7d32;">
-            <strong>ℹ NOTA IMPOSITIVA IMPORTANTE:</strong><br>
-            Todos los valores detallados en este presupuesto son <strong>NETOS</strong> y NO incluyen IVA. 
-            El Impuesto al Valor Agregado correspondiente a fertilizantes es del <strong>10,5%</strong>, el cual se adicionará al momento de la facturación.
-        </div>
-
-        <div class="footer-vos">
-            <h4>COMUNIDAD +VOS | Sinergia Agro</h4>
-            <p>Un ecosistema de triple impacto impulsado por Agroconsulta SRL</p>
-            <ul>
-                <li>🌱 <strong>Sostenibilidad:</strong> Economía circular</li>
-                <li>📊 <strong>Gestión:</strong> Digitalización de datos</li>
-                <li>🤝 <strong>Comunidad:</strong> Valor social y ambiental</li>
-            </ul>
-            <hr style="border-color: #444; margin: 15px 0;">
-            <p>Agroconsulta SRL - Comprometidos con el futuro del agro.</p>
-        </div>
-
+    <div class="alert-box">
+      ⚠ CONDICIÓN TÉCNICA: Aplicación debe ser INCORPORADA AL SUELO para maximizar eficiencia y reducir pérdidas.
     </div>
 
-    <script>
-        document.getElementById('downloadPdf').addEventListener('click', function () {
-            const btn = this;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = 'Generando...';
-            btn.disabled = true;
+    <h3>PAQUETE 1: TECNOLÓGICO SIMPLE (120 u N/ha)</h3>
+    <p style="font-size: 13px; color: #555;">
+      Priorización de aporte de unidades de nitrógeno mediante fuentes convencionales.
+    </p>
 
-            // 1. Clonar el elemento
-            // Clonamos el contenedor para manipularlo sin afectar la vista del usuario
-            const element = document.getElementById('invoice');
-            const clone = element.cloneNode(true);
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Unidades N/ha</th>
+            <th>Bolsas/ha</th>
+            <th>Total Bolsas<br />(37 ha)</th>
+            <th>Precio Unit.<br />(Neto S/IVA)</th>
+            <th>Costo/ha<br />(Neto)</th>
+            <th>Costo Total<br />(Neto)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="text-left"><strong>Opción 1A:</strong> Urea 45% N</td>
+            <td>120</td>
+            <td>11</td>
+            <td>407</td>
+            <td>$24.140</td>
+            <td>$265.540</td>
+            <td class="total-col">$9.824.980</td>
+          </tr>
+          <tr>
+            <td class="text-left"><strong>Opción 1B:</strong> Nitrato de Amonio 28% N</td>
+            <td>120</td>
+            <td>18</td>
+            <td>666</td>
+            <td>$23.526</td>
+            <td>$423.468</td>
+            <td class="total-col">$15.668.316</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-            // 2. Preparar el clon
-            // Lo forzamos a tener un ancho fijo de escritorio (aprox 750px entra perfecto en A4)
-            // Lo posicionamos fuera de pantalla para que el usuario no lo vea parpadear
-            clone.style.width = '750px';
-            clone.style.maxWidth = '750px';
-            clone.style.minWidth = '750px';
-            clone.style.padding = '40px';
-            clone.style.margin = '0';
-            clone.style.position = 'absolute';
-            clone.style.left = '-9999px';
-            clone.style.top = '0';
-            clone.style.backgroundColor = 'white';
-            
-            // Asegurar que las tablas se vean bien en el clon
-            const tables = clone.querySelectorAll('.table-responsive');
-            tables.forEach(t => t.style.overflow = 'visible');
+    <h3>PAQUETE 2: TECNOLÓGICO ELEVADO (80 u N/ha)</h3>
+    <p style="font-size: 13px; color: #555;">
+      Uso de tecnologías de alta eficiencia (inhibidores/complejas) para reducir dosis manteniendo respuesta.
+    </p>
 
-            // Agregamos el clon al cuerpo del documento
-            document.body.appendChild(clone);
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Unidades N/ha</th>
+            <th>Bolsas/ha</th>
+            <th>Total Bolsas<br />(37 ha)</th>
+            <th>Precio Unit.<br />(Neto S/IVA)</th>
+            <th>Costo/ha<br />(Neto)</th>
+            <th>Costo Total<br />(Neto)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="text-left">
+              <strong>Opción 2A:</strong> YaraBela Nitrodoble<br />
+              <small>(27% N + CaO + Mg)</small>
+            </td>
+            <td>80</td>
+            <td>12</td>
+            <td>444</td>
+            <td>$25.194</td>
+            <td>$302.328</td>
+            <td class="total-col">$11.186.136</td>
+          </tr>
+          <tr>
+            <td class="text-left">
+              <strong>Opción 2B:</strong> Nitrogen Slow X<br />
+              <small>(45% N + DMPP)</small>
+            </td>
+            <td>80</td>
+            <td>8</td>
+            <td>296</td>
+            <td>$42.838</td>
+            <td>$342.704</td>
+            <td class="total-col">$12.680.048</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-            // 3. Configuración del PDF
-            const opt = {
-                margin:       [0.3, 0.3, 0.3, 0.3], // Márgenes [top, left, bottom, right]
-                filename:     'Presupuesto_Agroconsulta_2026.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { 
-                    scale: 2,           // Alta resolución
-                    useCORS: true,      // Permitir imágenes externas si las hubiera
-                    scrollY: 0          // Capturar desde el inicio
-                },
-                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
-                pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] } // Evitar cortes feos
-            };
+    <!-- ✅ LUGAR IDEAL DEL CORTE: antes del resumen -->
+    <div class="pdf-page-break"></div>
 
-            // 4. Generar y Limpiar
-            html2pdf().set(opt).from(clone).save().then(() => {
-                document.body.removeChild(clone); // Eliminar el clon
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }).catch(err => {
-                console.error(err);
-                if(document.body.contains(clone)) document.body.removeChild(clone);
-                btn.innerHTML = 'Error';
-                setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; }, 2000);
-            });
+    <h3>RESUMEN COMPARATIVO DE INVERSIÓN</h3>
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>Opción</th>
+            <th>Tecnología</th>
+            <th>Costo por ha (Neto)</th>
+            <th>Inversión Total (Neto)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="text-left"><strong>1A (Urea)</strong></td>
+            <td>Simple (120u)</td>
+            <td>$265.540</td>
+            <td class="total-col">$9.824.980</td>
+          </tr>
+          <tr>
+            <td class="text-left"><strong>2A (YaraBela)</strong></td>
+            <td>Elevada (80u)</td>
+            <td>$302.328</td>
+            <td class="total-col">$11.186.136</td>
+          </tr>
+          <tr>
+            <td class="text-left"><strong>2B (Slow X)</strong></td>
+            <td>Elevada (80u)</td>
+            <td>$342.704</td>
+            <td class="total-col">$12.680.048</td>
+          </tr>
+          <tr>
+            <td class="text-left"><strong>1B (Nitrato)</strong></td>
+            <td>Simple (120u)</td>
+            <td>$423.468</td>
+            <td class="total-col">$15.668.316</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Nota IVA -->
+    <div style="margin-top: 25px; padding: 15px; background-color: #f1f8e9; border: 1px solid #c8e6c9; border-left: 5px solid #2E7D32; font-size: 13px; color: #2e7d32;">
+      <strong>ℹ NOTA IMPOSITIVA IMPORTANTE:</strong><br />
+      Todos los valores detallados en este presupuesto son <strong>NETOS</strong> y NO incluyen IVA.
+      El Impuesto al Valor Agregado correspondiente a fertilizantes es del <strong>10,5%</strong>,
+      el cual se adicionará al momento de la facturación.
+    </div>
+
+    <div class="footer-vos">
+      <h4>COMUNIDAD +VOS | Sinergia Agro</h4>
+      <p>Un ecosistema de triple impacto impulsado por Agroconsulta SRL</p>
+      <ul>
+        <li>🌱 <strong>Sostenibilidad:</strong> Economía circular</li>
+        <li>📊 <strong>Gestión:</strong> Digitalización de datos</li>
+        <li>🤝 <strong>Comunidad:</strong> Valor social y ambiental</li>
+      </ul>
+      <hr style="border-color: #444; margin: 15px 0;" />
+      <p>Agroconsulta SRL - Comprometidos con el futuro del agro.</p>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("downloadPdf").addEventListener("click", function () {
+      const btn = this;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = "Generando...";
+      btn.disabled = true;
+
+      const element = document.getElementById("invoice");
+      const clone = element.cloneNode(true);
+
+      // ✅ Activamos estilos solo-PDF
+      clone.classList.add("pdf-mode");
+
+      // Forzamos un ancho consistente (clave para que no “refluya”)
+      clone.style.width = "750px";
+      clone.style.maxWidth = "750px";
+      clone.style.minWidth = "750px";
+      clone.style.padding = "40px";
+      clone.style.margin = "0";
+      clone.style.position = "absolute";
+      clone.style.left = "-9999px";
+      clone.style.top = "0";
+      clone.style.backgroundColor = "white";
+
+      // Que las tablas no queden “cortadas” por overflow
+      const tables = clone.querySelectorAll(".table-responsive");
+      tables.forEach((t) => (t.style.overflow = "visible"));
+
+      document.body.appendChild(clone);
+
+      // ✅ Config PDF estable: A4 real en milímetros
+      const opt = {
+        margin: [10, 10, 10, 10], // mm
+        filename: "Presupuesto_Agroconsulta_2026.pdf",
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          scrollY: 0,
+          windowWidth: 750
+        },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        pagebreak: {
+          mode: ["css", "legacy"],
+          before: ".pdf-page-break" // ✅ fuerza 2 hojas con el corte
+        }
+      };
+
+      html2pdf()
+        .set(opt)
+        .from(clone)
+        .save()
+        .then(() => {
+          document.body.removeChild(clone);
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        })
+        .catch((err) => {
+          console.error(err);
+          if (document.body.contains(clone)) document.body.removeChild(clone);
+          btn.innerHTML = "Error";
+          setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+          }, 2000);
         });
-    </script>
-
+    });
+  </script>
 </body>
 </html>
